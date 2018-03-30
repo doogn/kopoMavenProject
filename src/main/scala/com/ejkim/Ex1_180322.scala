@@ -20,6 +20,7 @@ object Ex1_180322 {
       var lastChar = data.substring(dataSize - 1).toString
       lastChar.equalsIgnoreCase("0") })
 
+
   }
 
 }
