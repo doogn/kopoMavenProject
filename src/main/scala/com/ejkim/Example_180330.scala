@@ -7,7 +7,6 @@ object Example_180330 {
     // 예제 1. yearValue, week Value 함수화
 
     def quizDef(inputValue: String): (Int, Int) = {
-      var inputValue = "2017;34"
       var target = inputValue.split(";")
       var yearValue = target(0)
       var weekValue = target(1)
