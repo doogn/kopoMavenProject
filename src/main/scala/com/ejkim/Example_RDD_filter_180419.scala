@@ -112,10 +112,3 @@ object Example_RDD_filter_180419 {
 
   }
 }
-
-
-
-
-
-
-
