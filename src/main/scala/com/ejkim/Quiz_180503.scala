@@ -1,9 +1,11 @@
 package com.ejkim
 
+
 import org.apache.spark.sql.SparkSession
 import scala.collection.mutable.ArrayBuffer
 import org.apache.spark.sql.{DataFrame, Row, SQLContext, SaveMode}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
+import edu.princeton.cs.introcs.StdStats  // mean, stddev 함수가 포함된 라이브러리 import
 
 object Quiz_180503 {
 
@@ -30,8 +32,13 @@ def movingAverage(targetData: Array[Double], myorder: Int): Array[Double] = {
 }
 }
 
+
+
+
   ////////////////////////////////////  Spark-session definition  ////////////////////////////////////
   var spark = SparkSession.builder().config("spark.master","local").getOrCreate()
+
+
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////  Data Loading   ////////////////////////////////////////////////
@@ -218,6 +225,29 @@ def movingAverage(targetData: Array[Double], myorder: Int): Array[Double] = {
 
   })
 
+  //////////// 3. stdlib.jar 파일 이용해서 구하기 (map)
+
+  var groupRdd3 = mapRdd.groupBy(x=>{
+    (x.getString(keyNo))
+  }).map(x=> {
+
+    var key = x._1
+    var data = x._2
+    var data2 = x._2.map(x=>{x.getDouble(4)}).toArray  // mean, stddev 함수 활용을 위해 Array로 변환
+
+    var size = data2.size
+    var average = StdStats.mean(data2)  // Stdstats 라이브러리의 mean 함수 사용
+    var stddeviation = StdStats.stddev(data2)  // Stdstats 라이브러리의 stddev 함수 사용
+
+    var outputData = data.map(x => {
+      (x.getString(0),
+        size,
+        average,
+        stddeviation)
+    })
+
+    outputData
+
+  })
 
 }
-

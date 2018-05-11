@@ -107,7 +107,7 @@ object Example_RDD_GroupBy_2_180503 {
       // Row 형태일 때는 getString(Double,...)으로 원하는 값을 가져오고 (index no.는 0부터 시작 => getString(0), not getString(1))
       // Row 형태가 아닐 때는 x._n 으로 원하는 값을 가져온다 (1부터 시작 => 첫번째 값이 x._1, not x._0)
       var size = data.size
-      (key, size)
+      (key, size, data)
     })
 
     var groupRdd2 = mapRdd.groupBy(x=>{
