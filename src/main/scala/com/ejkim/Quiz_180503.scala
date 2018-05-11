@@ -250,4 +250,53 @@ def movingAverage(targetData: Array[Double], myorder: Int): Array[Double] = {
 
   })
 
+  //////////// 4. map으로 구하기 (Ratio 포함)
+
+  var groupRdd1 = mapRdd.groupBy(x=>{
+    (x.getString(keyNo))
+  }).map(x=> {
+
+    var key = x._1
+    var data = x._2
+
+    var size = x._2.map(x=>{x.getDouble(4)}).size
+    var summation = x._2.map(x=>{x.getDouble(4)}).sum
+
+    var average = 0.0
+    if(size == 0) {
+      average = 0
+    } else {
+      average = summation / size
+    }
+
+    var devsum = x._2.map(x=>{Math.pow((x.getDouble(4)-average),2)}).sum
+    var stddev = 0.0
+    if(size == 0) {
+      stddev = 0
+    } else {
+      stddev = Math.pow((devsum / size), 0.5)
+    }
+
+    var ratio = 1.0  // ratio 구하기
+
+    var outputData = data.map(x => {
+
+      ratio = x.getDouble(qtyNo) / average  // average는 같지만 qty가 각기 달라 의미있는 ratio
+      (x.getString(0),
+        size,
+        average,
+        stddev,
+        ratio)
+    })
+
+    outputData
+
+  })
+
+  // A01, PRODUCT1, 201401, 3000, 0.7
+  // A01, PRODUCT1, 201402, 3000, 0.7
+
+  // 주차 정보로 GROUPBY => 1~52주차 각 주를 기준으로 평균값 정리 =>
+
+
 }

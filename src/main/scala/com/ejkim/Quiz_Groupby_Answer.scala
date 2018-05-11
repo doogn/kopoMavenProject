@@ -234,6 +234,4 @@ object Quiz_Groupby_Answer {
     //        mapResult
 
 
-  }
-
 }
