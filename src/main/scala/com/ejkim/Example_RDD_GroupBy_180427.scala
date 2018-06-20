@@ -6,7 +6,7 @@ object Example_RDD_GroupBy_180427 {
 
   def main(args: Array[String]): Unit = {
 
-    var spark = SparkSession.builder().config("spark.master","local").getOrCreate()
+    var spark = SparkSession.builder().config("spark.master", "local").getOrCreate()
 
     // oracle connection
     var staticUrl = "jdbc:oracle:thin:@192.168.110.111:1521/orcl"
@@ -53,14 +53,14 @@ object Example_RDD_GroupBy_180427 {
     // (kecol, accountid, product, yearweek, qty, product_name)
     var rawRdd = rawData.rdd
 
-    var filteredRdd = rawRdd.filter(x=>{
+    var filteredRdd = rawRdd.filter(x => {
       // boolean = true
       var checkValid = true
       // 찾기: yearweek 인덱스로 주차정보만 인트타입으로 변환
       var weekValue = x.getString(yearweekNo).substring(4).toInt
 
       // 비교한후 주차정보가 53 이상인 경우 레코드 삭제
-      if( weekValue >= 53){
+      if (weekValue >= 53) {
         checkValid = false
       }
 
@@ -68,7 +68,8 @@ object Example_RDD_GroupBy_180427 {
     })
 
     //분석 대상을 그룹핑한다
-    var groupRdd = filteredRdd.
+    //var groupRdd = filteredRdd.
     //분석대상 키 정의 (거래처, 상품)
 
+  }
 }

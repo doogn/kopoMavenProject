@@ -252,7 +252,7 @@ def movingAverage(targetData: Array[Double], myorder: Int): Array[Double] = {
 
   //////////// 4. map으로 구하기 (Ratio 포함)
 
-  var groupRdd1 = mapRdd.groupBy(x=>{
+  var groupRdd4 = mapRdd.groupBy(x=>{
     (x.getString(keyNo))
   }).map(x=> {
 

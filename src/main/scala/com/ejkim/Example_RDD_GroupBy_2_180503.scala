@@ -13,7 +13,7 @@ object Example_RDD_GroupBy_2_180503 {
     /////////////////////////////
 
     // oracle connection
-    var staticUrl = "jdbc:oracle:thin:@192.168.110.111:1521/orcl"
+    var staticUrl = "jdbc:oracle:thin:@192.168.110.112:1521/orcl"
 
     var staticUser = "kopo"
     var staticPw = "kopo"
@@ -138,8 +138,31 @@ object Example_RDD_GroupBy_2_180503 {
       })
 
       outputData
-
     })
+
+    var groupRdd7 = mapRdd.groupBy(x=>{
+      (x.getString(keyNo))
+    }).map(x=> {
+      //key값 String
+      var key = x._1
+      //기본 데이터 156
+      var data = x._2
+      // Row 형태일 때는 getString(Double,...)으로 원하는 값을 가져오고 (index no.는 0부터 시작 => getString(0), not getString(1))
+      // Row 형태가 아닐 때는 x._n 으로 원하는 값을 가져온다 (1부터 시작 => 첫번째 값이 x._1, not x._0)
+      var size = x._2.map(x=>{x.getDouble(3)}).size
+      var summation = x._2.map(x=>{x.getDouble(3)}).sum
+
+      var average = 0.0
+      if(size == 0) {
+        average = 0
+      } else {
+        average = summation / size
+      }
+      (key,average)  // 이렇게 하면 이건 .toDF()로 바로 DataFrame화 가능
+    })
+
+
+
 
     var groupRdd3 = mapRdd.groupBy(x=>{
       (x.getString(keyNo))
@@ -172,6 +195,81 @@ object Example_RDD_GroupBy_2_180503 {
 
     })
 
+    var groupRdd4 = mapRdd.groupBy(x=>{
+      (x.getString(keyNo))
+    }).flatMap(x=> {
+      //key값 String
+      var key = x._1
+      //기본 데이터 156
+      var data = x._2
+      // Row 형태일 때는 getString(Double,...)으로 원하는 값을 가져오고 (index no.는 0부터 시작 => getString(0), not getString(1))
+      // Row 형태가 아닐 때는 x._n 으로 원하는 값을 가져온다 (1부터 시작 => 첫번째 값이 x._1, not x._0)
+      var size = x._2.map(x=>{x.getDouble(3)}).size
+      var summation = x._2.map(x=>{x.getDouble(3)}).sum
+
+      var average = 0.0
+      if(size == 0) {
+        average = 0
+      } else {
+        average = summation / size
+      }
+
+      var ratio = 1.0d  // ratio 값 초기화
+
+      var outputData = data.map(x => {
+
+        //
+        (x.getString(0), // key 정보 (거래처, 상품)
+          x.getString(1), // 주차 정보 (yearweek)
+          x.getDouble(2), // Original QTY
+          x.getDouble(3), // New QTY
+          average,  // 평균
+          x.getDouble(3) / average) //  ratio
+      })
+
+      outputData
+
+    })
+
+    // flatmap을 사용했을 때 => Row를 안 쓰면 바로 .toDF()를 사용해서 DataFrame으로 변경 가능
+    // flatmap을 사용했을 때 => Row를 쓰면 .toDF()로 DataFrame 못 만듦 (Row는 어떨때 쓰는가?)
+
+    // RDD[...]  ... 안에 Iterable 형태의 자료가 있으면 .toDF()로 데이터프레임 못 만듦 => String, Double 등 명확한 형태 있어야
+    // ==> 없으면 structur 부여해야 함
+
+
+    var groupRdd8 = mapRdd.groupBy(x=>{
+      (x.getString(keyNo))
+    }).map(x=> {
+      //key값 String
+      var key = x._1
+      //기본 데이터 156
+      var data = x._2
+      // Row 형태일 때는 getString(Double,...)으로 원하는 값을 가져오고 (index no.는 0부터 시작 => getString(0), not getString(1))
+      // Row 형태가 아닐 때는 x._n 으로 원하는 값을 가져온다 (1부터 시작 => 첫번째 값이 x._1, not x._0)
+      var size = x._2.map(x=>{x.getDouble(3)}).size
+      var summation = x._2.map(x=>{x.getDouble(3)}).sum
+
+      var average = 0.0
+      if(size == 0) {
+        average = 0
+      } else {
+        average = summation / size
+      }
+
+      var outputData = data.map(x => {
+        Row(x.getString(0), // key 정보 (거래처, 상품)
+          x.getString(1), // 주차 정보 (yearweek)
+          x.getDouble(2), // Original QTY
+          x.getDouble(3), // New QTY
+          average) //  key(거래처, 상품)의 평균
+      })
+
+      outputData
+    })
+
   }
+
+
 
 }
